@@ -1,0 +1,70 @@
+{
+    "2026-10-01": [
+        {
+            "label": "United States",
+            "nb_uniq_visitors": 2190,
+            "nb_visits": 2703,
+            "nb_actions": 5702,
+            "nb_users": 0,
+            "max_actions": 54,
+            "sum_visit_length": 401448,
+            "bounce_count": 1898,
+            "nb_visits_converted": 223,
+            "code": "us",
+            "logo": "plugins/Morpheus/icons/dist/flags/us.png",
+            "UserCountry_Country": "United States",
+            "segment": "countryCode==us",
+            "logoHeight": 16
+        },
+        {
+            "label": "Germany",
+            "nb_uniq_visitors": 829,
+            "nb_visits": 1170,
+            "nb_actions": 4186,
+            "nb_users": 0,
+            "max_actions": 30,
+            "sum_visit_length": 410493,
+            "bounce_count": 613,
+            "nb_visits_converted": 137,
+            "code": "de",
+            "logo": "plugins/Morpheus/icons/dist/flags/de.png",
+            "UserCountry_Country": "Germany",
+            "segment": "countryCode==de",
+            "logoHeight": 16
+        }
+    ],
+    "2026-10-02": [
+        {
+            "label": "United States",
+            "nb_uniq_visitors": 1919,
+            "nb_visits": 2348,
+            "nb_actions": 5390,
+            "nb_users": 0,
+            "max_actions": 39,
+            "sum_visit_length": 427266,
+            "bounce_count": 1587,
+            "nb_visits_converted": 214,
+            "code": "us",
+            "logo": "plugins/Morpheus/icons/dist/flags/us.png",
+            "UserCountry_Country": "United States",
+            "segment": "countryCode==us",
+            "logoHeight": 16
+        },
+        {
+            "label": "Germany",
+            "nb_uniq_visitors": 821,
+            "nb_visits": 1169,
+            "nb_actions": 4222,
+            "nb_users": 0,
+            "max_actions": 31,
+            "sum_visit_length": 436875,
+            "bounce_count": 613,
+            "nb_visits_converted": 119,
+            "code": "de",
+            "logo": "plugins/Morpheus/icons/dist/flags/de.png",
+            "UserCountry_Country": "Germany",
+            "segment": "countryCode==de",
+            "logoHeight": 16
+        }
+    ]
+}
