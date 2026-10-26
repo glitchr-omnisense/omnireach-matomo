@@ -1,6 +1,6 @@
 # omnireach/matomo
 
-[omniscient/omnireach](https://github.com/glitchr-studio/omnireach)'s Matomo, under any PHP host:
+[omnisense/omnireach](https://github.com/glitchr-omnisense/omnireach)'s Matomo, under any PHP host:
 visits, visitors, pageviews, bounce rate and visit length of a site, by entry page, page,
 referrer, country, device or day, through Matomo's Reporting API - a self-hosted Matomo or Matomo
 Cloud.

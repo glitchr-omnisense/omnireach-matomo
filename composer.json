@@ -11,7 +11,7 @@
         "framework-agnostic",
         "omnireach"
     ],
-    "homepage": "https://github.com/glitchr-studio/omnireach-matomo",
+    "homepage": "https://github.com/glitchr-omnisense/omnireach-matomo",
     "license": "MIT",
     "authors": [
         {
@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "omniscient/omnireach": "^1.0@dev",
+        "omnisense/omnireach": "^1.0@dev",
         "symfony/http-client-contracts": "^3.0"
     },
     "require-dev": {
