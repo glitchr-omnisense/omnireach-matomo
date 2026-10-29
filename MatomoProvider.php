@@ -36,7 +36,10 @@ final class MatomoProvider implements AudienceInterface
     ];
 
     /** @var array<string, string> the segment of each dimension a filter can name */
-    private const SEGMENTS = ['source' => 'referrerName', 'country' => 'countryCode', 'device' => 'deviceType'];
+    private const SEGMENTS = ['source' => 'referrerName', 'country' => 'countryCode'];
+
+    /** @var array<string, list<string>> Matomo's device types behind each of the family's devices */
+    private const DEVICE_TYPES = ['mobile' => ['smartphone', 'phablet', 'feature phone']];
 
     private readonly JsonApi $api;
 
@@ -79,7 +82,10 @@ final class MatomoProvider implements AudienceInterface
         [$method, $prefix] = null !== $dimension ? (self::REPORTS[$dimension->value] ?? throw new NotSupportedException('Matomo has no report by '.$dimension->value.'.')) : ['API.get', ''];
         $segments = [];
         foreach ($query->filters as $name => $value) {
-            if (isset(self::SEGMENTS[$name])) {
+            if ('device' === $name) {
+                // The family's units: "mobile" is Matomo's three mobile types, ORed (",").
+                $segments[] = implode(',', array_map(static fn (string $type): string => 'deviceType=='.rawurlencode($type), self::DEVICE_TYPES[strtolower($value)] ?? [strtolower($value)]));
+            } elseif (isset(self::SEGMENTS[$name])) {
                 $segments[] = self::SEGMENTS[$name].'=='.rawurlencode('country' === $name ? strtolower($value) : $value);
             } elseif ($name !== $dimension?->value) {
                 throw new NotSupportedException(\sprintf('Matomo filters on the dimension "%s" only in a report broken down by it.', $name));
@@ -95,6 +101,9 @@ final class MatomoProvider implements AudienceInterface
         $rows = [];
         foreach ($daily ? $answer->values : ['' => $answer->values] as $date => $report) {
             $lines = null === $dimension ? [Data::of($report)] : Data::of($report)->items();
+            if (Dimension::Device === $dimension) {
+                $lines = self::merged($lines, $dimension);
+            }
             foreach ($lines as $line) {
                 $dimensions = ($daily ? ['date' => (string) $date] : []) + (null !== $dimension ? [$dimension->value => self::label($dimension, $line)] : []);
                 if (null === $dimension && [] === $line->values) {
@@ -118,6 +127,35 @@ final class MatomoProvider implements AudienceInterface
         }
 
         return $answer;
+    }
+
+    /**
+     * The lines that become one row of the family's (Matomo's smartphone,
+     * phablet and feature phone: one "mobile"), merged: their counts summed,
+     * so the rates read from them (bounces, visit length) are weighted by
+     * visits; the first line's other fields kept.
+     *
+     * @param list<Data> $lines
+     *
+     * @return list<Data>
+     */
+    private static function merged(array $lines, Dimension $dimension): array
+    {
+        $merged = [];
+        foreach ($lines as $line) {
+            $label = self::label($dimension, $line);
+            if (!isset($merged[$label])) {
+                $merged[$label] = $line->values;
+                continue;
+            }
+            foreach ($line->values as $key => $value) {
+                if ((\is_int($value) || \is_float($value)) && (\is_int($merged[$label][$key] ?? null) || \is_float($merged[$label][$key] ?? null))) {
+                    $merged[$label][$key] += $value;
+                }
+            }
+        }
+
+        return array_map(static fn (array $values): Data => new Data($values), array_values($merged));
     }
 
     private static function label(Dimension $dimension, Data $line): string

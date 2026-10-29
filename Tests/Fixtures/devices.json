@@ -1,0 +1,7 @@
+[
+  {"label": "Desktop", "nb_uniq_visitors": 60100, "nb_visits": 70120, "nb_actions": 140300, "bounce_count": 46000, "sum_visit_length": 13000000, "segment": "deviceType==desktop"},
+  {"label": "Smartphone", "nb_uniq_visitors": 22000, "nb_visits": 25867, "nb_actions": 51000, "bounce_count": 17500, "sum_visit_length": 4100000, "segment": "deviceType==smartphone"},
+  {"label": "Tablet", "nb_uniq_visitors": 2900, "nb_visits": 3130, "nb_actions": 6100, "bounce_count": 2100, "sum_visit_length": 560000, "segment": "deviceType==tablet"},
+  {"label": "Phablet", "nb_uniq_visitors": 900, "nb_visits": 976, "nb_actions": 1900, "bounce_count": 650, "sum_visit_length": 150000, "segment": "deviceType==phablet"},
+  {"label": "Feature phone", "nb_uniq_visitors": 10, "nb_visits": 10, "nb_actions": 12, "bounce_count": 9, "sum_visit_length": 300, "segment": "deviceType==feature%20phone"}
+]

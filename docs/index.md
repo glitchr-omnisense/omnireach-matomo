@@ -66,7 +66,7 @@ Per query: `ReachQuery::$site` replaces `site` (another `idSite`) for one report
 | `date` | `<start>,<end>` (`Y-m-d`) |
 | `filter_limit` | the query's `limit` (per day in a history: the rows are cut to `limit` afterwards) |
 | `flat` | `1` for a breakdown |
-| `segment` | the filters on source (`referrerName==`), country (`countryCode==`, lower-cased) and device (`deviceType==`), joined by `;` (and), each value URL-encoded |
+| `segment` | the filters on source (`referrerName==`), country (`countryCode==`, lower-cased) and device (`deviceType==`, lower-cased; the family's `mobile` as Matomo's three mobile types ORed: `deviceType==smartphone,deviceType==phablet,deviceType==feature%20phone`), joined by `;` (and), each value URL-encoded |
 
 ```
 POST https://demo.matomo.cloud/index.php
@@ -87,9 +87,11 @@ in a report broken down by it.`).
 an empty day of the whole site's report is skipped. Labels become the family's values:
 
 - country: Matomo's `code` upper-cased (`FR`), else its label;
-- device: `smartphone`, `phablet` and `feature phone` become `mobile`, every other type is
-  Matomo's label lower-cased (`desktop`, `tablet`, `console`, `tv`, `portable media player`,
-  `unknown`...); types with no visit are kept, at 0;
+- device: `smartphone`, `phablet` and `feature phone` become one `mobile` row, their counts
+  summed (so the bounce rate and the visit duration read from them are weighted by visits), at the
+  place of the first of them; every other type is Matomo's label lower-cased (`desktop`,
+  `tablet`, `console`, `tv`, `portable media player`, `unknown`...); types with no visit are kept,
+  at 0;
 - pages and entry pages: the label with a leading `/` added when it has none;
 - source: Matomo's label as it is.
 
@@ -116,18 +118,11 @@ archived by the browser or by cron); Matomo Cloud's are its plan's. A segment th
 not archived may answer 0: the public demo answered 0 visits for every segment asked on
 2026-10-26.
 
-> [!WARNING]
-> Known defect: smartphones, phablets and feature phones each give a row labelled `mobile` (seen
-> live on the demo, 2026-10-26: `mobile` rows of 25867, 976 and 10 visits in one report), where one
-> `mobile` row summing them is expected. Sum the rows by device in the application.
-
-> [!WARNING]
-> Known defect: a `device` filter is sent as it is as Matomo's `deviceType` segment, so the
-> family's `mobile` is refused by Matomo (`ProviderException`: `Matomo answered 200 for API.get:
-> Invalid 'log_visit.config_device_type' segment value mobile`, seen live on 2026-10-26), where a
-> filter in the family's units is expected. Matomo's own names (`smartphone`, `desktop`) are
-> accepted; but in a report broken down by device, filtering on `smartphone` then drops every row,
-> since the rows say `mobile`.
+A `device` filter takes the family's units: `mobile` is sent as Matomo's three mobile types ORed
+([segmentation](https://developer.matomo.org/api-reference/reporting-api-segmentation): `,` is
+or), so a report broken down by device keeps its `mobile` row; `desktop`, `tablet` and Matomo's
+other types are sent as they are, lower-cased. The OR segment follows Matomo's documentation: the
+public demo answers 0 visits for every segment, so it was not verified live.
 
 ## Example
 
@@ -159,12 +154,10 @@ foreach ($devices->rows as $row) {
 
 ```
 desktop               56962 visits
-mobile                25867 visits
+mobile                26853 visits
 unknown               10087 visits
 tablet                 4687 visits
-mobile                  976 visits
 console                  17 visits
-mobile                   10 visits
 portable media player      8 visits
 tv                        2 visits
 camera                    0 visits
@@ -175,7 +168,8 @@ smart speaker             0 visits
 wearable                  0 visits
 ```
 
-(2026-10-19 to 2026-10-25; the whole site and its entry pages over the same week are in the core's
+(2026-10-19 to 2026-10-25; the run gave three `mobile` rows then - 25867, 976 and 10 visits - which
+the provider sums into one since 2026-10-29, as shown; the whole site and its entry pages over the same week are in the core's
 [installation page](https://github.com/glitchr-omnisense/omnireach/blob/1.x/docs/installation.md#a-providers-api))
 
 With a token, in Symfony:
